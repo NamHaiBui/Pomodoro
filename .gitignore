@@ -1,0 +1,28 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor Files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Build Artifacts
+/build/
+/dist/
+
+# Dependency Caches
+/node_modules/
+/pub-cache/
+.dart_tool/
+
+# Logs and Temporary Files
+*.log
+*.tmp
+/tmp/
+/logs/
+
+# Sensitive Information (should already be in lower-level .gitignore files)
+.env

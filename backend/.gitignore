@@ -1,0 +1,11 @@
+# Node.js modules and build artifacts
+node_modules/
+dist/
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+# Consider being more specific if you have other JSON files to track
