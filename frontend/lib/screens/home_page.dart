@@ -6,8 +6,8 @@ import 'dart:convert';
 import 'package:pomodoro/models/session_type.dart';
 import 'package:pomodoro/models/to_do_task.dart';
 import 'package:pomodoro/models/on_going_session.dart';
-import 'package:pomodoro/screens/Component/session_type_item.dart';
-import 'package:pomodoro/screens/Component/todo_task_item.dart';
+import 'package:pomodoro/screens/widgets/session_type_item.dart';
+import 'package:pomodoro/screens/widgets/todo_task_item.dart';
 import 'package:pomodoro/utils/date_time_util.dart';
 
 class HomePage extends StatefulWidget {

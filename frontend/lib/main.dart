@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_page.dart';
+import 'package:pomodoro/screens/demo_home_page.dart';
 
 void main() {
   runApp(PomodoroApp());
@@ -14,7 +14,7 @@ class PomodoroApp extends StatelessWidget {
         primarySwatch: Colors.red,
         scaffoldBackgroundColor: Colors.grey[100],
       ),
-      home: HomePage(),
+      home: DemoHomePage(),
     );
   }
 }

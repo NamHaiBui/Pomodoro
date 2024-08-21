@@ -1,11 +1,20 @@
-// src/app.ts
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import admin from 'firebase-admin';
 import dotenv from 'dotenv';
 
+dotenv.config();
+// Initialize Firebase Admin SDK
+dotenv.config(); // Load environment variables from .env file
+
+const serviceAccount = require(process.env.PATH_TO_SAK!);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET
+});
+
 import {
-  uploadRouter,
   sessionTypeRouter,
   todoTaskRouter,
   ongoingSessionRouter,
@@ -13,7 +22,6 @@ import {
 
 import { notFound, errorHandler } from './middleware';
 
-dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
@@ -26,7 +34,7 @@ app.use(bodyParser.json());
 app.use('/api/session_types', sessionTypeRouter);
 app.use('/api/todo_tasks', todoTaskRouter);
 app.use('/api/ongoing_sessions', ongoingSessionRouter);
-app.use('/api/upload', uploadRouter);
+
 
 // Error handling middleware
 app.use(notFound);
