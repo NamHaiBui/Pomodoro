@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:pomodoro/screens/demo_home_page.dart';
 
 void main() {
-  runApp(PomodoroApp());
+  runApp(const PomodoroApp());
 }
 
 class PomodoroApp extends StatelessWidget {
+  const PomodoroApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,7 +16,7 @@ class PomodoroApp extends StatelessWidget {
         primarySwatch: Colors.red,
         scaffoldBackgroundColor: Colors.grey[100],
       ),
-      home: DemoHomePage(),
+      home: const DemoHomePage(),
     );
   }
 }

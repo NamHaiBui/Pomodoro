@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:pomodoro/models/session_type.dart';
 import 'package:pomodoro/models/to_do_task.dart';
 import 'package:pomodoro/models/on_going_session.dart';
-import 'package:pomodoro/screens/widgets/session_type_item.dart';
+import 'package:pomodoro/screens/layout/vertical_splitview.dart';
 import 'package:pomodoro/screens/widgets/timer_item.dart';
 import 'package:pomodoro/screens/widgets/todo_task_item.dart';
 import 'package:pomodoro/utils/date_time_util.dart';
@@ -19,6 +19,7 @@ class DemoHomePage extends StatefulWidget {
 
 class _ReplicatedHomePageState extends State<DemoHomePage> {
   // Sample data for the offline demo
+  Timer? _sessionTimer;
   List<SessionType> sessionTypes = [
     SessionType(id: '1', name: 'Pomodoro', duration: 25),
     SessionType(id: '2', name: 'Short Break', duration: 5),
@@ -42,17 +43,13 @@ class _ReplicatedHomePageState extends State<DemoHomePage> {
 
   // Functions to simulate API calls (no actual network requests)
   Future<void> fetchData() async {
-    // In a real app, You would fetch data from an API here
-    // For this demo, we'll just keep the sample data
     setState(() {}); // Trigger a rebuild to reflect any changes
   }
 
   Future<void> addTask(String title, String description) async {
     // Simulate adding a task
     final newTask = TodoTask(
-      id: DateTime.now()
-          .millisecondsSinceEpoch
-          .toString(), // Simple ID generation
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
       description: description,
       completed: false,
@@ -75,7 +72,6 @@ class _ReplicatedHomePageState extends State<DemoHomePage> {
   }
 
   Future<void> startSession(String sessionTypeId) async {
-    // Simulate starting a session
     final selectedSessionType =
         sessionTypes.firstWhere((type) => type.id == sessionTypeId);
     setState(() {
@@ -86,16 +82,19 @@ class _ReplicatedHomePageState extends State<DemoHomePage> {
       );
     });
 
-    // TODO: You might want to add logic here to start a timer based on selectedSessionType.duration
+    // Start the timer and store it
+    _sessionTimer = Timer(Duration(minutes: selectedSessionType.duration), () {
+      endSession(ongoingSession!.id);
+    });
   }
 
   Future<void> endSession(String id) async {
     // Simulate ending a session
     setState(() {
       ongoingSession = null;
+      _sessionTimer?.cancel(); // Cancel the timer
+      _sessionTimer = null; // Clear the timer reference
     });
-
-    // TODO: You might want to add logic here to stop the timer
   }
 
   @override
@@ -116,55 +115,37 @@ class _ReplicatedHomePageState extends State<DemoHomePage> {
               ? Center(
                   child: Text(errorMessage,
                       style: const TextStyle(color: Colors.red)))
-              : Row(
-                  children: [
-                    // Left side with Todo Tasks
-                    Expanded(
-                      child: _buildTodoTasks(),
-                    ),
-                    // Middle section with Timer and Session Types
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Session Type buttons on top
-                          _buildSessionTypes(),
-                          const SizedBox(height: 16),
-                          // Timer in the middle
-                          if (ongoingSession != null)
-                            TimerWidget(
-                              initialDurationInSeconds: sessionTypes
-                                      .firstWhere((type) =>
-                                          type.id ==
-                                          ongoingSession!.sessionTypeId)
-                                      .duration *
-                                  60,
-                              onStart: () {
-                                // Handle timer start in the parent if needed
-                              },
-                              onStop: () {
-                                setState(() {
-                                  ongoingSession = null; // End the session
-                                });
-                                // Handle timer stop in the parent if needed
-                              },
-                              onSkip: () {
-                                setState(() {
-                                  ongoingSession = null; // End the session
-                                });
-                                // Handle timer skip in the parent if needed
-                              },
-                            ),
-                          if (ongoingSession == null)
-                            _buildOngoingSession(), // Show "No ongoing session" message
-                        ],
-                      ),
-                    ),
-                    // Right side for future video player (blank for now)
-                    Expanded(
-                      child: Container(), // Placeholder for video player
-                    ),
-                  ],
+              : VerticalSplitView(
+                  left: _buildTodoTasks(),
+                  middle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      _buildSessionTypes(),
+                      const SizedBox(height: 16),
+                      if (ongoingSession != null)
+                        TimerWidget(
+                          initialDurationInSeconds: sessionTypes
+                                  .firstWhere((type) =>
+                                      type.id == ongoingSession!.sessionTypeId)
+                                  .duration *
+                              60,
+                          onStart: () {},
+                          onStop: () {
+                            setState(() {
+                              ongoingSession = null; // End the session
+                            });
+                          },
+                          onSkip: () {
+                            setState(() {
+                              ongoingSession = null; // End the session
+                            });
+                          },
+                        ),
+                      if (ongoingSession == null) _buildOngoingSession(),
+                    ],
+                  ),
+                  right: Container(), // Placeholder for video player
+                  ratios: const [0.33, 0.34, 0.33],
                 ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddTaskDialog(context),
